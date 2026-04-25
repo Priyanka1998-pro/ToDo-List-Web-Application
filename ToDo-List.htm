@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<head>
+    <title>To-Do Page</title>
+    <style>
+        body{
+         background-image:url("backg.jpg");
+         background-size: cover;
+         background-position: center;
+         background-repeat: no-repeat;
+         height: 100vh;
+         text-align: center;
+         font-family: cursive;
+        }
+        .diary_page{
+            margin:100px auto;
+            padding:30px;
+            width:320px;
+            border-radius: 30px;
+            box-shadow:0px 15px 30px rgba(0,0,0,0.2);
+            font-family: cursive;
+            background-image: url("diary.jpg");
+            background-size: cover;
+            background-position: center;  
+        }
+        h1{
+            font-size: 20px;
+        }
+        input{
+            width:80%;
+            padding:10px;
+            border-radius: 10px;
+            border:1px solid gray;
+            outline:none;
+        }
+.btn{
+    width:80%;
+    border: none;
+    border-radius: 20px;
+    cursor:pointer;
+    font-weight: bold;
+    font-family:Arial,sans-serif;
+    background-color: white;
+    color:black;
+    margin:8px auto;
+    padding:10px;
+    transition: 0.3s;
+    border-radius: 20px;
+    cursor: pointer;
+}
+.btn:hover{
+    transform: scale(1.05);
+}
+.add{
+    background:#4CAF50;
+    color:white;
+}
+.edit{
+    background:#2196F3;
+    color:white;
+}
+.remove{
+    background:#f44336;
+    color:white;
+}
+.clear{
+    background: #777;
+    color:white;
+}
+    </style>
+</head>
+<body>
+   
+<div class="diary_page">
+     <h1>TO-DO LIST</h1>
+<input type="text" id="d_page" name="list" placeholder="Enter your task....."/>
+<button type="submit" class="btn add" onclick="addTask()">ADD TASK</button>
+<button type="submit" class="btn edit" onclick="editTask()">EDIT TASK</button>
+<button type="submit" class="btn remove" onclick="removeTask()">REMOVE TASK</button>
+<button type="submit" class="btn clear" onclick="clearTask()">CLEAR TASKS</button>
+<ol id="task_list"></ol>
+</div>
+<script>
+    let selectedTask=null;
+    // save tasks to localstorage
+    function saveTasks(){
+        let tasks=[];
+        document.querySelectorAll("#task_list li").forEach(function(li){
+            tasks.push(li.innerText);
+        });
+        localStorage.setItem("tasks",JSON.stringify(tasks));
+    }
+    //load tasks on page refresh
+    window.onload=function(){
+        let savedTasks=JSON.parse(localStorage.getItem("tasks"));
+        if(savedTasks){
+            savedTasks.forEach(function(task){
+                let li=document.createElement("li");
+                li.innerText=task;
+        //select on click
+        li.onclick=function(){
+            selectedTask=li;
+            document.getElementById("d_page").value=li.innerText;
+        }
+        document.getElementById("task_list").appendChild(li);
+            });
+        }
+    };
+    //add task
+    function addTask(){
+        let input=document.getElementById("d_page");
+        let taskText=input.value;
+        if(taskText===""){
+            alert("please enter a task");
+            return;
+        }
+        let li=document.createElement("li");
+        li.innerText=taskText;
+        //select task on click
+        li.onclick=function(){
+            selectedTask=li;
+            input.value=li.innerText;
+        };
+        document.getElementById("task_list").appendChild(li);
+        saveTasks();
+        input.value="";
+    }
+    //edit task
+    function editTask() {
+    let input = document.getElementById('d_page');
+    if (selectedTask) {
+        selectedTask.innerText = input.value; // Update the list item text
+         saveTasks();
+        selectedTask = null; // Clear selection
+        input.value = ""; // Clear input
+    } else {
+        alert("Please select a task from the list first");
+    }
+}
+//remve task
+function removeTask(){
+      let input = document.getElementById('d_page');
+      if (selectedTask) {
+        selectedTask.remove();
+         saveTasks();
+        selectedTask=null;
+        input.value="";
+      
+      }else {
+        alert("Please select a task from the list first");
+    }
+}
+//clear Task
+function clearTask(){
+    let input = document.getElementById('d_page');
+    document.getElementById("task_list").innerText="";
+     saveTasks();
+    selectedTask=null;
+    input.value="";
+}
+</script>
+</body>
+</html>
